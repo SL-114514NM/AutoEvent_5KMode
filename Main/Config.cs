@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoEvent_5KMode
+namespace AutoEvent_5KMode.Main
 {
-    public class Class1
+    internal class Config
     {
     }
 }
