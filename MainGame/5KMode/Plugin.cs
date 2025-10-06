@@ -1,26 +1,167 @@
-﻿using AutoEvent_5KMode.API;
+﻿using AutoEvent;
+using AutoEvent_5KMode.API;
+using AutoEvent_5KMode.Items;
 using AutoEvent_5KMode.Main;
+using AutoEvent_5KMode.Roles;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
+using Exiled.Events.EventArgs.Player;
+using Exiled.Events.EventArgs.Server;
+using Exiled.Events.EventArgs.Warhead;
 using HintServiceMeow.Core.Extension;
 using HintServiceMeow.Core.Models.Hints;
+using HintServiceMeow.UI.Extension;
+using MEC;
 using PlayerRoles;
+using ProjectMER.Features;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using Hint = HintServiceMeow.Core.Models.Hints.Hint;
 
 namespace AutoEvent_5KMode.MainGame._5KMode
 {
-    public class Plugin : AutoEvent.Interfaces.Event
+    public class Plugin : Event<Config, Translation>
     {
         public override string Name { get; set; } = "SCP:5K";
         public override string Description { get; set; } = "SCP:5K";
         public override string Author { get; set; } = "HUI";
         public override string CommandName { get; set; } = "5K";
+        public static Plugin G5K { get; set; }
+        public static Config StaticConfig { get; set; }
+        public readonly System.Random random = new System.Random();
+        public bool Omega { get; set; } = false;
+        protected override void RegisterEvents()
+        {
+            G5K = this;
+            StaticConfig = Config;
+            Exiled.Events.Handlers.Server.RespawningTeam += OnRespawnTeam;
+            Exiled.Events.Handlers.Player.UsingItem += OnUsingItem;
+            Exiled.Events.Handlers.Player.DroppingItem += OnDroppingItem;
+            Exiled.Events.Handlers.Player.PickingUpItem += OnPickUpItem;
+            Exiled.Events.Handlers.Warhead.Starting += OnStarting;
+            Exiled.Events.Handlers.Warhead.Detonating += OnDetonating;
+            base.RegisterEvents();
+        }
+        protected override void UnregisterEvents()
+        {
+            G5K = null;
+            StaticConfig = null;
+            Exiled.Events.Handlers.Server.RespawningTeam -= OnRespawnTeam;
+            Exiled.Events.Handlers.Player.UsingItem -= OnUsingItem;
+            Exiled.Events.Handlers.Player.DroppingItem -= OnDroppingItem;
+            Exiled.Events.Handlers.Player.PickingUpItem -= OnPickUpItem;
+            Exiled.Events.Handlers.Warhead.Starting -= OnStarting;
+            Exiled.Events.Handlers.Warhead.Detonating -= OnDetonating;
+            if (Main.Plugin.Instance.NBCoroutine.IsRunning)
+            {
+                Timing.KillCoroutines(Main.Plugin.Instance.NBCoroutine);
+            }
+            base.UnregisterEvents();
+        }
+        public void OnStarting(StartingEventArgs ev)
+        {
+            if (ev.Player !=null)
+            {
+                if (ev.Player.IsSpecialRole(PlayerExtension.SpecialRolesName.GOC))
+                {
+                    if (Omega==false)
+                    {
+                        Omega = true;
+                        Cassie.MessageTranslated("", "Omega核弹协议已启动");
+                    }
+                }
+            }
+        }
+        public void OnDetonating(DetonatingEventArgs ev)
+        {
+            foreach (Player player in Player.List)
+            {
+                if (Omega == true)
+                {
+                    player.Kill("Omega核弹爆炸");
+                    OnFinished();
+                }
+            }
+        }
+        public void OnPickUpItem(PickingUpItemEventArgs ev)
+        {
+            if (ev.Player != null)
+            {
+                
+            }
+        }
+        public void OnDroppingItem(DroppingItemEventArgs ev)
+        {
+            if (ev.Player != null)
+            {
+                if (SpecialItemManager.IsSpecial(ev.Item, SpecialItems.GOCQS))
+                {
+                    if (ev.Player.IsSpecialRole(PlayerExtension.SpecialRolesName.GOC))
+                    {
+                        if (ev.Player.Zone != Exiled.API.Enums.ZoneType.Surface)
+                        {
+                            ev.Player.GetPlayerUi().CommonHint.ShowOtherHint("你必须在地表使用它", 6);
+                            ev.IsAllowed = false;
+                        }
+                        ObjectSpawner.SpawnSchematic
+                            (
+                            "GOCQS",
+                            ev.Player.Position
+                            );
+                    }
+                }
+            }
+        }
+        public void OnUsingItem(UsingItemEventArgs ev)
+        {
+            if (ev.Player != null)
+            {
+                if (SpecialItemManager.IsSpecial(ev.Item, SpecialItems.GOCQS))
+                {
+                    if (ev.Player.IsSpecialRole(PlayerExtension.SpecialRolesName.GOC))
+                    {
+                        if (ev.Player.Zone != Exiled.API.Enums.ZoneType.Surface)
+                        {
+                            ev.Player.GetPlayerUi().CommonHint.ShowOtherHint("你必须在地表使用它", 6);
+                            ev.IsAllowed = false;
+                        }
+                        ObjectSpawner.SpawnSchematic
+                            (
+                            "GOCQS",
+                            ev.Player.Position
+                            );
+                    }
+                }
+            }
+        }
+        public void OnRespawnTeam(RespawningTeamEventArgs ev)
+        {
+            if (!IsFisish())
+            {
+                if (ev.NextKnownTeam == Faction.FoundationStaff)
+                {
+                    float R = random.Next(1, 10);
+                    if (R >= 5)
+                    {
+                        foreach (Player player in ev.Players)
+                        {
+                            if (SCP1440.IsAny==true)
+                            {
+                                Nu22.Spawn(player);
+                            }
+                        }
+                    }
+                    else
+                    {
 
+                    }
+                }
+            }
+        }
         protected override bool IsRoundDone()
         {
             return IsFisish();
@@ -31,6 +172,7 @@ namespace AutoEvent_5KMode.MainGame._5KMode
             {
                 player.Role.Set(PlayerRoles.RoleTypeId.ClassD);
                 player.Position = RoleTypeId.Tutorial.GetRandomSpawnLocation().Position;
+                GOCQS.GolalPickup.UnSpawn();
             }
         }
 
@@ -82,6 +224,7 @@ namespace AutoEvent_5KMode.MainGame._5KMode
             }
             foreach (var p in SCPS)
             {
+                SCP1440.Spawn(SCPS.RandomItem());
                 p.Role.Set(StarAPI.GetRandomSCP());
             }
             foreach (var p in Choas)

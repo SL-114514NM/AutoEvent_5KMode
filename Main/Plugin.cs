@@ -1,6 +1,8 @@
 ﻿using AutoEvent_5KMode.API;
+using AutoEvent_5KMode.Roles;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs.Player;
+using MEC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,17 +17,20 @@ namespace AutoEvent_5KMode.Main
         public override string Name => "AutoEvent_MiniGame_5K";
         public override Version Version => new Version(0,1);
         public static Plugin Instance {  get; set; }
+        public CoroutineHandle NBCoroutine {  get; set; }
         public override void OnEnabled()
         {
             Instance = this;
             Exiled.Events.Handlers.Player.Died += OnDied;
             Main.ConfigPath.Int();
+            
             base.OnEnabled();
         }
         public override void OnDisabled()
         {
             Instance = null;
             Exiled.Events.Handlers.Player.Died -= OnDied;
+            Timing.KillCoroutines(NBCoroutine);
             base.OnDisabled();
         }
         public void OnDied(DiedEventArgs ev)
@@ -35,6 +40,14 @@ namespace AutoEvent_5KMode.Main
                 if (StarAPI.SelectPlayer.Contains(ev.Player))
                 {
                     StarAPI.SelectPlayer.Remove(ev.Player);
+                }
+                if (PlayerExtension.PlayerSpecial.ContainsKey(ev.Player))
+                {
+                    ev.Player.RemoveSpecialRole();
+                }
+                if (ev.Player.IsSpecialRole(PlayerExtension.SpecialRolesName.Scp1440))
+                {
+                    SCP1440.IsAny = false;
                 }
             }
         }

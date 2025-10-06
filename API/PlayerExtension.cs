@@ -33,7 +33,8 @@ namespace AutoEvent_5KMode.API
         public enum SpecialRolesName
         {
             GOC,
-            Nu22
+            Nu22,
+            Scp1440
         }
     }
 }

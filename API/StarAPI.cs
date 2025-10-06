@@ -1,5 +1,7 @@
 ﻿using Exiled.API.Extensions;
 using Exiled.API.Features;
+using Exiled.API.Features.Items;
+using Exiled.API.Features.Pickups;
 using PlayerRoles;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,27 @@ namespace AutoEvent_5KMode.API
     public class StarAPI
     {
         public static List<Player> SelectPlayer = new List<Player>();
+        public static Dictionary<Player, string> PlayerRanks = new Dictionary<Player, string>();
+        public static bool SetPlayerRank(Player player,string rank, string Color)
+        {
+            if (PlayerRanks.ContainsKey(player))
+            {
+                PlayerRanks[player] = rank;
+                player.RankName = $"({PlayerRanks[player]}){player.RankName}";
+                player.RankColor = Color;
+                return true;
+            }
+            PlayerRanks.Add(player, rank);
+            player.RankName = $"({PlayerRanks[player]}){player.RankName}";
+            player.RankColor = Color;
+            return true;
+        }
+        public static bool RemoveRank(Player player)
+        {
+            player.RankColor = "white";
+            player.RankName = $"{player.RankName}";
+            return PlayerRanks.Remove(player);
+        }
         /// <summary>
         /// 从指定的列表里随机一个玩家
         /// </summary>
@@ -72,6 +95,10 @@ namespace AutoEvent_5KMode.API
         {
             List<RoleTypeId> roleTypeIds = new List<RoleTypeId>().Where(x => x.IsChaos()).ToList();
             return roleTypeIds.GetRandomItem();
+        }
+        public static Pickup Get(ushort id)
+        {
+            return Pickup.List.FirstOrDefault(x => x.Serial == id);
         }
     }
 }
