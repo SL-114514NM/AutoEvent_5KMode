@@ -1,5 +1,6 @@
 ﻿using Exiled.API.Features;
 using HarmonyLib;
+using Mirror;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,12 @@ namespace AutoEvent_5KMode.Patchs
         [HarmonyPatch(typeof(VoiceTransceiver), "ServerReceiveMessage")]
         public class NBPatch
         {
-            private void Prefix(ReferenceHub referenceHub, VoiceMessage message)
+            static void Prefix(NetworkConnection conn, VoiceMessage msg)
             {
-                if (referenceHub != null&&PlayerChatChannel.ContainsKey(Player.Get(referenceHub))&& Player.Get(referenceHub).IsAlive)
+                if (PlayerChatChannel.ContainsKey(Player.Get(conn)))
                 {
-                    message.Channel = PlayerChatChannel[Player.Get(referenceHub)];
-                    referenceHub.connectionToClient.Send<VoiceMessage>(message);
+                    msg.Channel = PlayerChatChannel[Player.Get(conn)];
+                    conn.Send(msg);
                 }
             }
         }
