@@ -111,5 +111,9 @@ namespace AutoEvent_5KMode.Items
         /// GOC-奇术核弹
         /// </summary>
         GOCQS,
+        /// <summary>
+        /// 攻击小组3201召唤器
+        /// </summary>
+        ZHAOHUAN3201
     }
 }

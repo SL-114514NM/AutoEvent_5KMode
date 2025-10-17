@@ -3,19 +3,27 @@ using AutoEvent_5KMode.API;
 using AutoEvent_5KMode.Items;
 using AutoEvent_5KMode.Main;
 using AutoEvent_5KMode.Roles;
+using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
+using Exiled.API.Features.Doors;
+using Exiled.API.Features.Items;
+using Exiled.API.Features.Pickups;
+using Exiled.API.Features.Roles;
 using Exiled.Events.EventArgs.Player;
 using Exiled.Events.EventArgs.Server;
 using Exiled.Events.EventArgs.Warhead;
 using HintServiceMeow.Core.Extension;
 using HintServiceMeow.Core.Models.Hints;
 using HintServiceMeow.UI.Extension;
+using LabApi.Events.Arguments.PlayerEvents;
 using MEC;
+using NetworkManagerUtils.Dummies;
 using PlayerRoles;
 using ProjectMER.Features;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,13 +35,14 @@ namespace AutoEvent_5KMode.MainGame._5KMode
     public class Plugin : Event<Config, Translation>
     {
         public override string Name { get; set; } = "SCP:5K";
-        public override string Description { get; set; } = "SCP:5K";
+        public override string Description { get; set; } = "基于AutoEvent制作的5K模式";
         public override string Author { get; set; } = "HUI";
         public override string CommandName { get; set; } = "5K";
         public static Plugin G5K { get; set; }
         public static Config StaticConfig { get; set; }
         public readonly System.Random random = new System.Random();
         public bool Omega { get; set; } = false;
+        private bool QSCanPick { get; set; } = true;
         protected override void RegisterEvents()
         {
             G5K = this;
@@ -44,6 +53,8 @@ namespace AutoEvent_5KMode.MainGame._5KMode
             Exiled.Events.Handlers.Player.PickingUpItem += OnPickUpItem;
             Exiled.Events.Handlers.Warhead.Starting += OnStarting;
             Exiled.Events.Handlers.Warhead.Detonating += OnDetonating;
+            API.VoiceDummy.Base.AudioFinish += OnFinish;
+            LabApi.Events.Handlers.PlayerEvents.UsingIntercom += OnBeginIntercom;
             base.RegisterEvents();
         }
         protected override void UnregisterEvents()
@@ -56,11 +67,70 @@ namespace AutoEvent_5KMode.MainGame._5KMode
             Exiled.Events.Handlers.Player.PickingUpItem -= OnPickUpItem;
             Exiled.Events.Handlers.Warhead.Starting -= OnStarting;
             Exiled.Events.Handlers.Warhead.Detonating -= OnDetonating;
+            API.VoiceDummy.Base.AudioFinish -= OnFinish;
+            LabApi.Events.Handlers.PlayerEvents.UsingIntercom -= OnBeginIntercom;
             if (Main.Plugin.Instance.NBCoroutine.IsRunning)
             {
                 Timing.KillCoroutines(Main.Plugin.Instance.NBCoroutine);
             }
             base.UnregisterEvents();
+        }
+        public void OnBeginIntercom(PlayerUsingIntercomEventArgs ev)
+        {
+            if (ev.Player !=null)
+            {
+                Player player = Player.Get(ev.Player.ReferenceHub);
+                if (player.IsSpecialRole(PlayerExtension.SpecialRolesName.GOC))
+                {
+                    if (ev.State == PlayerRoles.Voice.IntercomState.Ready)
+                    {
+                        if (GOC.CanStartMRG ==true)
+                        {
+                            Pickup Coin = Pickup.Create(ItemType.Coin);
+                            SpecialItemManager.AddSpecial(Coin, SpecialItems.ZHAOHUAN3201);
+                            Pickup pickup = Pickup.Create(ItemType.SCP244b);
+                            SpecialItemManager.AddSpecial(pickup, SpecialItems.GOCQS);
+                            player.AddItem(pickup);
+                            player.AddItem(Coin);
+                            Hint hint = new Hint()
+                            {
+                                AutoText = a =>
+                                {
+                                    if (player.IsDead)
+                                    {
+                                        a.PlayerDisplay.RemoveHint(a.Hint);
+                                        return "";
+                                    }
+                                    if (player.IsSpecialRole(PlayerExtension.SpecialRolesName.GOC))
+                                    {
+                                        if (player.CurrentItem.Serial == Coin.Serial)
+                                        {
+                                            return "<color=blue>[攻击小组3201召唤币]</color>\n现在已经完成任务， 可以去地表开启MRG核弹打击或召唤攻击小组3201支援";
+                                        }
+                                        return "";
+                                    }
+                                    return "";
+                                }
+                            };
+                            player.AddHint(hint);
+                            foreach(Player goc in PlayerExtension.PlayerSpecial.Keys.Where(x => x.IsSpecialRole(API.PlayerExtension.SpecialRolesName.GOC)).ToList())
+                            {
+                                goc.GetPlayerUi().CommonHint.ShowOtherHint("资料上传成功，已授权使用MRG核弹打击", 20);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public void OnFinish(API.VoiceDummy.Base ev)
+        {
+            if (ev.Name == "GOC-奇术炸弹")
+            {
+                foreach(Player player in Player.List)
+                {
+                    player.Kill("被奇术炸弹炸死了");
+                }
+            }
         }
         public void OnStarting(StartingEventArgs ev)
         {
@@ -91,13 +161,36 @@ namespace AutoEvent_5KMode.MainGame._5KMode
         {
             if (ev.Player != null)
             {
-                
+                if (QSCanPick == false)
+                {
+                    ev.IsAllowed = false;
+                }
             }
         }
         public void OnDroppingItem(DroppingItemEventArgs ev)
         {
             if (ev.Player != null)
             {
+                if (SpecialItemManager.IsSpecial(ev.Item, SpecialItems.ZHAOHUAN3201))
+                {
+                    if (ev.Player.IsSpecialRole(PlayerExtension.SpecialRolesName.GOC))
+                    {
+                        if (Player.List.Where(x => x.Role.Type == RoleTypeId.Spectator).Count() >= 4)
+                        {
+                            GOCGOJI3201.SpawnPTECN3201(StarAPI.GetRandomPlayer(Player.List.Where(x => x.Role.Type == RoleTypeId.Spectator).ToList()));
+                            foreach (Player player in Player.List.Where(x => x.Role.Type == RoleTypeId.Spectator&&x.IsSpecialRole(PlayerExtension.SpecialRolesName.PTECN3201)).ToList())
+                            {
+                                GOCGOJI3201.Spawn3201(player);
+                            }
+                            ev.IsAllowed = false;
+                        }
+                        else
+                        {
+                            ev.Player.ShowHint("人数不足", 6);
+                            ev.IsAllowed = false;
+                        }
+                    }
+                }
                 if (SpecialItemManager.IsSpecial(ev.Item, SpecialItems.GOCQS))
                 {
                     if (ev.Player.IsSpecialRole(PlayerExtension.SpecialRolesName.GOC))
@@ -105,13 +198,20 @@ namespace AutoEvent_5KMode.MainGame._5KMode
                         if (ev.Player.Zone != Exiled.API.Enums.ZoneType.Surface)
                         {
                             ev.Player.GetPlayerUi().CommonHint.ShowOtherHint("你必须在地表使用它", 6);
-                            ev.IsAllowed = false;
                         }
+                        ReferenceHub RDummy = DummyUtils.SpawnDummy("GOC-奇术炸弹");
+                        Player player = Player.Get(RDummy);
+                        player.IsGlobalMuted = true;
+                        player.Role.Set(RoleTypeId.Overwatch);
+                        API.VoiceDummy.Base Dummy = API.VoiceDummy.Base.Create("GOC-奇术炸弹",RDummy);
+                        Dummy.Play(Path.Combine(Main.ConfigPath.MusicPath,"gocqs.ogg"), false,true);
+                        QSCanPick = false;
                         ObjectSpawner.SpawnSchematic
                             (
                             "GOCQS",
-                            ev.Player.Position
+                            ev.Player.Position+new Vector3(0,0,1)
                             );
+                        ev.Item.Destroy();
                     }
                 }
             }
@@ -172,12 +272,17 @@ namespace AutoEvent_5KMode.MainGame._5KMode
             {
                 player.Role.Set(PlayerRoles.RoleTypeId.ClassD);
                 player.Position = RoleTypeId.Tutorial.GetRandomSpawnLocation().Position;
-                GOCQS.GolalPickup.UnSpawn();
             }
         }
 
         protected override void OnStart()
         {
+            List<Door> doors = Door.List.Where(x => x.Type == Exiled.API.Enums.DoorType.CheckpointEzHczA && x.Type == Exiled.API.Enums.DoorType.CheckpointEzHczB).ToList();
+            foreach (Door d in doors)
+            {
+                Cassie.MessageTranslated("", "清收-重收检查点已经封锁，将在3分钟后再次开启");
+                d.Lock(180, Exiled.API.Enums.DoorLockType.AdminCommand);
+            }
             API.VoiceDummy.Base Base = API.VoiceDummy.Base.Create("广播紧急通知");
             Base.Play(ConfigPath.MusicPath+"/StartBC.ogg", false, true);
             foreach(Player player in Player.List)
@@ -196,7 +301,7 @@ namespace AutoEvent_5KMode.MainGame._5KMode
                         else
                         {
                             Text = "[<color=red>SCP-5000</color>]|[<color=green>为什么?</color>]";
-                            Text += "\n>>借助GOC或其他的力量逃离这里<<";
+                            Text += "\n>>靠自己或借助其他的力量逃离这里<<";
                             Text += $"\n人类数量[{Player.List.Where(x => x.IsNTF&&x.IsCHI&&x.Role.Type == RoleTypeId.Scientist).Count()}]|Scp数量[{Player.List.Where(x => x.IsScp).Count()}]";
                         }
                         return Text;

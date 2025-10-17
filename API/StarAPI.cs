@@ -3,11 +3,15 @@ using Exiled.API.Features;
 using Exiled.API.Features.Items;
 using Exiled.API.Features.Pickups;
 using PlayerRoles;
+using PlayerRoles.Blood;
+using PlayerRoles.FirstPersonControl;
+using PlayerRoles.FirstPersonControl.Spawnpoints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace AutoEvent_5KMode.API
 {

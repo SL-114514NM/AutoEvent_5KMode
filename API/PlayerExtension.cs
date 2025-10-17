@@ -34,7 +34,9 @@ namespace AutoEvent_5KMode.API
         {
             GOC,
             Nu22,
-            Scp1440
+            Scp1440,
+            PTECN3201,
+            GOC3201
         }
     }
 }

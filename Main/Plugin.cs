@@ -1,6 +1,8 @@
 ﻿using AutoEvent_5KMode.API;
+using AutoEvent_5KMode.API.KeyBind;
 using AutoEvent_5KMode.Roles;
 using Exiled.API.Features;
+using Exiled.API.Features.Core.UserSettings;
 using Exiled.Events.EventArgs.Player;
 using MEC;
 using System;
@@ -23,7 +25,6 @@ namespace AutoEvent_5KMode.Main
             Instance = this;
             Exiled.Events.Handlers.Player.Died += OnDied;
             Main.ConfigPath.Int();
-            
             base.OnEnabled();
         }
         public override void OnDisabled()
@@ -48,6 +49,11 @@ namespace AutoEvent_5KMode.Main
                 if (ev.Player.IsSpecialRole(PlayerExtension.SpecialRolesName.Scp1440))
                 {
                     SCP1440.IsAny = false;
+                }
+                SettingBase.Unregister(ev.Player);
+                if (SimpleKeyBind.PlayerKeybindSetting.ContainsKey(ev.Player.ReferenceHub))
+                {
+                    SimpleKeyBind.PlayerKeybindSetting.Remove(ev.Player.ReferenceHub);
                 }
             }
         }

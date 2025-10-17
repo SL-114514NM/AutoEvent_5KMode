@@ -37,6 +37,7 @@ namespace AutoEvent_5KMode.API.VoiceDummy
         private float[] _encodeBuffer;
         private static int _nextConnectionId = 1000; 
         public bool Loop = false;
+        public static event Action<Base> AudioFinish;
         public VoiceChatChannel BroadcastChannel { get; set; } = VoiceChatChannel.Proximity;
         public Base(string name, ReferenceHub owner = null)
         {
@@ -148,6 +149,7 @@ namespace AutoEvent_5KMode.API.VoiceDummy
                 }
                 else
                 {
+                    AudioFinish?.Invoke(this);
                     if (Loop)
                     {
                         VorbisReader.SeekTo(TimeSpan.Zero);

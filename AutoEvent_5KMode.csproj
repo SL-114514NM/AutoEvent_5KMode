@@ -103,6 +103,10 @@
     <Reference Include="NVorbis">
       <HintPath>..\..\..\Downloads\dependencies (1)\dependencies\NVorbis.dll</HintPath>
     </Reference>
+    <Reference Include="Pooling, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Pooling.dll</HintPath>
+    </Reference>
     <Reference Include="ProjectMER, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\MER\ProjectMER-master\bin\x64\Debug\net4.8\ProjectMER.dll</HintPath>
@@ -159,12 +163,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\EffectExtension.cs" />
+    <Compile Include="API\KeyBind\SimpleKeyBind.cs" />
     <Compile Include="API\ListExtension.cs" />
     <Compile Include="API\MapCustEditer\MapEditer.cs" />
     <Compile Include="API\PlayerExtension.cs" />
     <Compile Include="API\VoiceDummy\Base.cs" />
     <Compile Include="API\VoiceDummy\FakeConnection.cs" />
-    <Compile Include="Items\GOCQS.cs" />
     <Compile Include="Items\SpecialItemManager.cs" />
     <Compile Include="MainGame\5KMode\Config.cs" />
     <Compile Include="MainGame\5KMode\Plugin.cs" />
@@ -176,6 +180,7 @@
     <Compile Include="Patchs\PlayerVoicePatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Roles\GOC.cs" />
+    <Compile Include="Roles\GOCGOJI3201.cs" />
     <Compile Include="Roles\Nu22.cs" />
     <Compile Include="Roles\SCP1440.cs" />
   </ItemGroup>

@@ -44,13 +44,33 @@ namespace AutoEvent_5KMode.MainGame._5KMode
             }
         };
         [Description("SCP1440角色配置")]
-        public List<Loadout> SCP1440 = new List<Loadout>()
+        public List<Loadout> SCP1440 { get; set; } = new List<Loadout>()
         {
             new Loadout()
             {
                 Items = new List<ItemType>(){ ItemType.Coin, ItemType.KeycardFacilityManager},
                 Health = 199,
                 Roles = new Dictionary<RoleTypeId, int>(){ { RoleTypeId.Tutorial, 100 } }
+            }
+        };
+        [Description("GOC3201支援小组的配置")]
+        public List<Loadout> GOC3201 { get; set; } = new List<Loadout>()
+        {
+            new Loadout()
+            {
+                Health = 250,
+                Items = new List<ItemType>(){ ItemType.ArmorHeavy, ItemType.GunLogicer, ItemType.SCP018, ItemType.SCP207},
+                Roles = new Dictionary<RoleTypeId, int>(){{RoleTypeId.Tutorial, 100}}
+            }
+        };
+        [Description("PTECN3201角色配置")]
+        public List<Loadout> PTECN3201Loadout { get; set; } = new List<Loadout>()
+        {
+            new Loadout()
+            {
+                Health = 300,
+                Items =new List<ItemType>(){ ItemType.ArmorHeavy, ItemType.GunFRMG0, ItemType.KeycardMTFCaptain},
+                Roles = new Dictionary<RoleTypeId, int>(){{RoleTypeId.Tutorial, 100}}
             }
         };
     }
