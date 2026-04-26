@@ -64,11 +64,10 @@ namespace AutoEvent_5KMode.API
         }
         public enum SpecifiItem
         {
-            现实锁定锚,
-            现实扭曲锚,
+            火箭筒,
+            斯克兰顿现实稳定锚,
             轨道炮,
             OmegaKeycard,
-            学术问题认证卡,
             M110大狙,
             SCP008病毒试剂,
             炮台放置器,

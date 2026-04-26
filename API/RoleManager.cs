@@ -65,10 +65,9 @@ namespace AutoEvent_5KMode.API
             CIGRU特工,
             CIGRU重盔甲兵,
             SCP682,
-            SCP008母体,
-            SCP008感染者,
+            SCP0082,
             GOC间谍,
-            GOC破译员,
+            GOC学者,
             GOC奇术打击二组组长,
             GOC奇术打击二组组员,
             SCP181,
@@ -76,7 +75,6 @@ namespace AutoEvent_5KMode.API
             UIU特遣,
             Nu7落锤肃杀B连连长,
             Nu7落锤肃杀B连士兵,
-
         }
     }
 }

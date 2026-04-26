@@ -146,23 +146,25 @@
     <Compile Include="API\MusicAPI\DummyAudioPlayer.cs" />
     <Compile Include="API\MusicAPI\SpeakerAudioPlayer.cs" />
     <Compile Include="API\NBServerSpifiecSettings.cs" />
+    <Compile Include="API\Patches\AdminToyPatches.cs" />
     <Compile Include="API\Patches\GostVisiblePatch.cs" />
+    <Compile Include="API\PlayerHardLineText.cs" />
     <Compile Include="API\RoleManager.cs" />
     <Compile Include="API\SAPI.cs" />
     <Compile Include="API\TyperHint.cs" />
     <Compile Include="Cores\MainContinue.cs" />
+    <Compile Include="Items\AutoShootTai.cs" />
     <Compile Include="Main\Config.cs" />
     <Compile Include="Main\MyEventHandler.cs" />
     <Compile Include="Main\Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Roles\GOC\Jd.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />
-    <Folder Include="Items\" />
-    <Folder Include="Roles\GOC\" />
     <Folder Include="Roles\MTF\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

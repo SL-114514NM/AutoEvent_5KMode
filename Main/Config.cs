@@ -14,7 +14,7 @@ namespace AutoEvent_5KMode.Main
 
         public bool Is5KMode { get; set; } = false;
         [Description("我直接用DeepSeek生成学术问题，后续改成自己的，要不然我没钱了qwq")]
-        public string DeepSeekKey { get; set; } = "sk-82845efd555548dbb6f7a5e1a6d5011f";
+        public string DeepSeekKey { get; set; } = "";
     }
 }
 
