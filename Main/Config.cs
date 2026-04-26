@@ -1,20 +1,20 @@
-﻿using Exiled.API.Features;
-using Exiled.API.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AutoEvent_5KMode.Main
 {
-    public class Config:IConfig
+    public class Config
     {
-        bool IConfig.IsEnabled { get; set; }
-        bool IConfig.Debug { get; set; }
-        [Description("SCP:5K主目录")]
-        public string RootPath { get; set; } = Path.Combine(Paths.Exiled, "SCP:5K");
+        public bool IsEnabled { get; set; }
+        [Description("是否启动5K模式")]
+
+        public bool Is5KMode { get; set; } = false;
+        [Description("我直接用DeepSeek生成学术问题，后续改成自己的，要不然我没钱了qwq")]
+        public string DeepSeekKey { get; set; } = "sk-82845efd555548dbb6f7a5e1a6d5011f";
     }
 }
+

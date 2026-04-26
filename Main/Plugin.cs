@@ -1,61 +1,44 @@
 ﻿using AutoEvent_5KMode.API;
-using AutoEvent_5KMode.API.KeyBind;
-using AutoEvent_5KMode.Roles;
-using Exiled.API.Features;
-using Exiled.API.Features.Core.UserSettings;
-using Exiled.Events.EventArgs.Player;
-using MEC;
+using LabApi.Loader.Features.Paths;
+using LabApi.Loader.Features.Plugins;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AutoEvent_5KMode.Main
 {
-    public class Plugin:Plugin<Config>
+    public class Plugin : Plugin<Config>
     {
-        public override string Author => "HUI";
-        public override string Name => "AutoEvent_MiniGame_5K";
-        public override Version Version => new Version(0,1);
-        public static Plugin Instance {  get; set; }
-        public CoroutineHandle NBCoroutine {  get; set; }
-        public override void OnEnabled()
+        public override string Name => "SL-5k模式";
+
+        public override string Description => "5K模式";
+
+        public override string Author => "灰(HUI)";
+
+        public override Version Version => new Version(1,0);
+
+        public override Version RequiredApiVersion => new Version(LabApi.Features.LabApiProperties.CompiledVersion);
+        public static Plugin Instance;
+        public string kkPath;
+        public override void Enable()
         {
             Instance = this;
-            Exiled.Events.Handlers.Player.Died += OnDied;
-            Main.ConfigPath.Int();
-            base.OnEnabled();
+            this.kkPath = Path.Combine(PathManager.LabApi.ToString(), "5KMusics");
+            if(!Directory.Exists(kkPath))
+            {
+                Directory.CreateDirectory(kkPath);
+            }
+            new NBServerSpifiecSettings().Activate();
+            LabApi.Events.CustomHandlers.CustomHandlersManager.RegisterEventsHandler(new MyEventHandler());
         }
-        public override void OnDisabled()
+        public override void Disable()
         {
             Instance = null;
-            Exiled.Events.Handlers.Player.Died -= OnDied;
-            Timing.KillCoroutines(NBCoroutine);
-            base.OnDisabled();
-        }
-        public void OnDied(DiedEventArgs ev)
-        {
-            if (ev.Player != null)
-            {
-                if (StarAPI.SelectPlayer.Contains(ev.Player))
-                {
-                    StarAPI.SelectPlayer.Remove(ev.Player);
-                }
-                if (PlayerExtension.PlayerSpecial.ContainsKey(ev.Player))
-                {
-                    ev.Player.RemoveSpecialRole();
-                }
-                if (ev.Player.IsSpecialRole(PlayerExtension.SpecialRolesName.Scp1440))
-                {
-                    SCP1440.IsAny = false;
-                }
-                SettingBase.Unregister(ev.Player);
-                if (SimpleKeyBind.PlayerKeybindSetting.ContainsKey(ev.Player.ReferenceHub))
-                {
-                    SimpleKeyBind.PlayerKeybindSetting.Remove(ev.Player.ReferenceHub);
-                }
-            }
+            new NBServerSpifiecSettings().Deactivate();
+            LabApi.Events.CustomHandlers.CustomHandlersManager.UnregisterEventsHandler(new MyEventHandler());
         }
     }
 }
