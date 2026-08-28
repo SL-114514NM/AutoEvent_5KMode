@@ -488,7 +488,6 @@ namespace AutoEvent_5KMode.API.Featrues.AudioManager
         /// </summary>
         private void SendSilencePacket()
         {
-            // 使用空字节数组而非 null，避免序列化时 ArgumentNullException
             VoiceMessage endMsg = new VoiceMessage(
                 Owner,
                 VoiceChatChannel.Intercom,

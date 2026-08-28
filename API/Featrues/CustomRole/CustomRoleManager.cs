@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LabApi.Features.Wrappers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +11,17 @@ namespace AutoEvent_5KMode.API.Featrues.CustomRole
     public class CustomRoleManager
     {
         public static List<CustomRole> CustomRoleList = new List<CustomRole>();
-
+        public static bool IsRole(Player player, int roleId)
+        {
+            if(!TryGetCustomRole(roleId, out CustomRole role)) return false;
+            if(!role.IsRole(player)) return false;
+            return true;
+        }
+        public static void RemovePlayer(Player player)
+        {
+            if (!CustomRoleList.Any(x => x.PlayerById.ContainsKey(player.PlayerId))) return;
+            CustomRoleList.FirstOrDefault(x => x.PlayerById.ContainsKey(player.PlayerId)).PlayerById.Remove(player.PlayerId);
+        }
         public static void RegisterAll()
         {
             foreach(CustomRole role in CustomRoleList)
@@ -29,6 +40,17 @@ namespace AutoEvent_5KMode.API.Featrues.CustomRole
         {
             CustomRole role = CustomRoleList.FirstOrDefault(x => x.Id == Id);
             return role;
+        }
+        public static bool TryGetCustomRole(int RoleId, out CustomRole role)
+        {
+            CustomRole customRole = GetCustomRole(RoleId);
+            if(customRole == null)
+            {
+                role = null;
+                return false;
+            }
+            role = customRole;
+            return true;
         }
         public static List<CustomRole> CheckAndCreateInstance()
         {
