@@ -139,29 +139,40 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="API\Featrues\Commands\TestPluginCommand.cs" />
-    <Compile Include="API\Featrues\CustomAbility.cs" />
     <Compile Include="API\EventHamdlers\MainEventHandler.cs" />
     <Compile Include="API\EventHamdlers\PlayerEventHandler.cs" />
     <Compile Include="API\Featrues\AbilityManager.cs" />
+    <Compile Include="API\Featrues\Abilitys\MagicRebound.cs" />
+    <Compile Include="API\Featrues\Abilitys\SpatialRealityAnchoring.cs" />
     <Compile Include="API\Featrues\AudioManager\DummyMusic.cs" />
     <Compile Include="API\Featrues\AudioManager\SpeakerAudioPlayer.cs" />
     <Compile Include="API\Featrues\CaesarCipher.cs" />
     <Compile Include="API\Featrues\Commands\GOCDecryptCommand.cs" />
+    <Compile Include="API\Featrues\Commands\TestPluginCommand.cs" />
+    <Compile Include="API\Featrues\CustomAbility.cs" />
     <Compile Include="API\Featrues\CustomItem\CustomItem.cs" />
+    <Compile Include="API\Featrues\CustomPaths.cs" />
+    <Compile Include="API\Featrues\CustomRole\CustomRole.cs" />
+    <Compile Include="API\Featrues\CustomRole\CustomRoleManager.cs" />
     <Compile Include="API\Featrues\CustomRole\Roles\CrimsonChurchBloodWedgeStrikeTeam\BloodBound.cs" />
     <Compile Include="API\Featrues\CustomRole\Roles\CrimsonChurchBloodWedgeStrikeTeam\ConduitRole.cs" />
     <Compile Include="API\Featrues\CustomRole\Roles\CrimsonChurchBloodWedgeStrikeTeam\PaganRole.cs" />
     <Compile Include="API\Featrues\CustomRole\Roles\CrimsonChurchBloodWedgeStrikeTeam\ScribeRole.cs" />
     <Compile Include="API\Featrues\CustomRole\Roles\CrimsonChurchBloodWedgeStrikeTeam\ZealotRole.cs" />
     <Compile Include="API\Featrues\CustomSpawnPosition.cs" />
-    <Compile Include="API\Featrues\CustomPaths.cs" />
-    <Compile Include="API\Featrues\CustomRole\CustomRole.cs" />
-    <Compile Include="API\Featrues\CustomRole\CustomRoleManager.cs" />
+    <Compile Include="API\Featrues\GameObjectScripts\ReboundGameObject.cs" />
+    <Compile Include="API\Featrues\GameObjectScripts\SpecifiWaypoint.cs" />
     <Compile Include="API\Featrues\GOCDecryptHandler.cs" />
+    <Compile Include="API\Featrues\LoadAniations\SerpAniLoad.cs" />
+    <Compile Include="API\Featrues\MoreProjectObjects\MPortjectDummyPlayer.cs" />
+    <Compile Include="API\Featrues\MoreProjectObjects\SerializableDummyPlayer.cs" />
     <Compile Include="API\Featrues\MyAPI.cs" />
     <Compile Include="API\Featrues\MyServerSpecifiSettings.cs" />
+    <Compile Include="API\Featrues\Patches\PMERPatch.cs" />
+    <Compile Include="API\Featrues\Patches\WayPointPatch.cs" />
     <Compile Include="API\Featrues\ServerTranslate.cs" />
+    <Compile Include="API\Featrues\SpecifiEnding\GOCMGREnding.cs" />
+    <Compile Include="API\Featrues\TypingHelper.cs" />
     <Compile Include="Loader\Config.cs" />
     <Compile Include="Loader\Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -170,8 +181,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="API\Featrues\CustomAbilities\" />
-    <Folder Include="API\Featrues\CustomRole\Roles\GOC\" />
+    <Folder Include="API\Featrues\Extensions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
