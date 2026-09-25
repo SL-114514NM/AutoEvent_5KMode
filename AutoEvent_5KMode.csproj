@@ -178,7 +178,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="A9\A9.json" />
+    <None Include="Alpha1Icon\Alpha1Icon.json" />
     <None Include="app.config" />
+    <None Include="CHIIcon\CHIIcon.json" />
+    <None Include="GOCIcon\GOCIcon.json" />
+    <None Include="Nu22Icon\Nu22Icon.json" />
+    <None Include="SerpentHandIcon\SerpentHandIcon.json" />
+    <None Include="ShenHong\ShenHong.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="API\Featrues\Extensions\" />
